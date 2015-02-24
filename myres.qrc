@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/res/img">
+        <file>newbloom.jpg</file>
+        <file>bye.jpg</file>
+        <file>c++.png</file>
+    </qresource>
+</RCC>
