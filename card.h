@@ -3,25 +3,23 @@
 
 class Card
 {
-
-    //Q_ENUMS(Suit)
-
 public:
     enum Suit { Spade, Club, Heart, Diamond, Joker, Vice };
 
-    Card(Suit suit, int number, bool selected = false);
+    explicit Card(int id);
     ~Card();
 
-    int getId() const;
+    inline int getId() const { return _id; }
+    inline Suit getSuit() const { return _suit; }
+    inline int getX() const { return _number; }
     int getNumber() const;
-    Suit getSuit() const;
-    int getSuitN() const;
+    int getY() const;
+    char getChar() const;
 
 protected:
+    int _id;
     Suit _suit;
     int _number;
-    bool _selected;
-    int _id;
 };
 
 #endif // CARD_H

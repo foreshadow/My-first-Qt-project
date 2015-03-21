@@ -2,29 +2,38 @@
 #define CARDITEM_H
 
 #include "card.h"
-#include <QObject>
 #include <QGraphicsItem>
 
 class CardItem : public QGraphicsItem
 {
 public:
-    CardItem(const Card *card, int x, int y);
+    CardItem(QPixmap &pokerPic, Card *card, int x = 0, int y = 0);
     ~CardItem();
 
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *);
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *);
 
-    void setcard(const Card *card);
+    inline bool isMyCard() const { return _myCard; }
+    inline bool isMySelected() const { return _mySelected; }
+    inline bool isTurnedover() const { return _turnover; }
+    inline int getCardId() const { return _card->getId(); }
+    void setMyCard(bool boo = true);
+    void setMySelected(bool boo);
+    void changeMySelected();
+    void turnOver();
 
 private:
-    QPixmap getCardPic(Card card);
+    QPixmap getCardPic() const;
 
 protected:
-    Card _card;
-
-signals:
-
-public slots:
+    Card *_card;
+    QPixmap &pokerPic;
+    QPixmap _pic;
+    bool _mySelected;
+    bool _myCard;
+    bool _turnover;
+    QRect paintRect() const;
 };
 
 #endif // CARDITEM_H

@@ -1,22 +1,35 @@
 #include <QApplication>
 #include <QTextCodec>
 #include "logindlg.h"
-#include "mainwindow.h"
+#include "gameprogress.h"
+#include "universal.h"
 
 int main(int argc, char *argv[])
 {
    QApplication a(argc, argv);
 
-   //QTextCodec::setCodecForTr(QTextCodec::codecForLocale()); //设置编码
-   //QTextCodec::setCodecForTr(QTextCodec::codecForName("GB2312"));
-
-   MainWindow w;
-   LoginDlg dlg;
-
-//   if(dlg.exec() == QDialog::Accepted)
-//   {
-       w.show();
+   QTcpSocket *tcpSocket = new QTcpSocket;
+   quint16 blockSize = 0;
+#ifndef GAMETEST
+   LoginDlg dlg(tcpSocket, blockSize);
+   if(dlg.exec() == QDialog::Accepted)
+   {
+#else
+#ifdef ONLINE
+#include "network.h"
+   tcpSocket->connectToHost("localhost", 23333);
+   tcpSocket->waitForConnected();
+   send(tcpSocket, "ITester");
+#endif
+#endif
+       GameProgress mainWnd(tcpSocket, blockSize);
+       mainWnd.show();
+#ifndef ONLINE
+   mainWnd.imitate();
+#endif
        return a.exec();
-//   }
-//   else return 0;
+#ifndef GAMETEST
+   }
+   else return 0;
+#endif
 }

@@ -13,7 +13,7 @@ class LoginDlg : public QDialog
     Q_OBJECT
 
 public:
-    explicit LoginDlg(QWidget *parent = 0);
+    explicit LoginDlg(QTcpSocket *tcpSocket, quint16 &blockSize, QWidget *parent = 0);
     ~LoginDlg();
 
 private slots:
@@ -21,17 +21,17 @@ private slots:
     void newConnect(); //连接服务器
     void readMessage();  //接收数据
     void displayError(QAbstractSocket::SocketError);  //显示错误
-
     void on_remoteHostPortLineEdit_editingFinished();
+    void on_usrLineEdit_editingFinished();
 
 private:
     Ui::LoginDlg *ui;
     QTcpSocket *tcpSocket;
-    QString message;  //存放从服务器接收到的字符串
-    quint16 blockSize; //存放文件的大小信息
+    quint16 &blockSize;
 
 protected:
     void paintEvent(QPaintEvent *);
+    bool identitySent;
 };
 
 #endif // LOGINDLG_H

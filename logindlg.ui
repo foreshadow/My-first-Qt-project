@@ -36,7 +36,7 @@
     <item>
      <widget class="QLineEdit" name="remoteHostPortLineEdit">
       <property name="text">
-       <string/>
+       <string>23333</string>
       </property>
       <property name="placeholderText">
        <string>端口号码</string>
@@ -44,7 +44,10 @@
      </widget>
     </item>
     <item>
-     <widget class="QLineEdit" name="usrlineEdit">
+     <widget class="QLineEdit" name="usrLineEdit">
+      <property name="text">
+       <string>Infinity</string>
+      </property>
       <property name="placeholderText">
        <string>尊姓大名</string>
       </property>
@@ -52,6 +55,9 @@
     </item>
     <item>
      <widget class="QLineEdit" name="pswlineEdit">
+      <property name="text">
+       <string>233</string>
+      </property>
       <property name="echoMode">
        <enum>QLineEdit::Password</enum>
       </property>

@@ -1,38 +1,29 @@
 #ifndef UNIVERSAL
 #define UNIVERSAL
 
-#include <QElapsedTimer>
-#include <QSplashScreen>
-#include <QImage>
 #include <QtCore>
-#include <QLabel>
 
-#define CARD_WIDTH 90
-#define CARD_HEIGHT 120
-#define CARD_POP_DY 30
-#define CARD_OVERLAP_DX 22.5
-#define CARD_WIDTH_IN_PIC 540
-#define CARD_HEIGHT_IN_PIC 720
+extern void delay(int s);
+extern void splash(QString path, int delaySecond, int x, int y);
 
-static void delay(int s)
-{
-    QElapsedTimer *t = new QElapsedTimer;
-    t->start();
-    while(t->elapsed()<s)
-    {
-        QCoreApplication::processEvents();
-    }
-    delete t;
-}
+#define CARD_WIDTH 75
+#define CARD_HEIGHT 100
+#define CARD_OVERLAP 5
+#define CARD_OVERLAP_DX CARD_WIDTH / 4
+#define CARD_POP_DY CARD_HEIGHT / 3
+#define CARD_WIDTH_IN_PIC 75
+#define CARD_HEIGHT_IN_PIC 100
 
-static void splash(QString path, int delaySecond, int x, int y)
-{
-    QSplashScreen *spl = new QSplashScreen;
-    spl->setPixmap(QPixmap(path).scaled(x,y));
-    spl->show();
-    delay(delaySecond*1000);
-    delete spl;
-}
+#define FOR_TO(l, r) for (int i=l; i<=r; i++)
+#define FOR_DOWNTO(r, l) for (int i=r; i>=l; i--)
+#define FOR_TO_2(l, r) for (int j=l; j<=r; j++)
+#define FOR_DOWNTO_2(r, l) for (int j=r; j>=l; j--)
+#define FOR_TO_3(l, r) for (int k=l; k<=r; k++)
+#define FOR_DOWNTO_3(r, l) for (int k=r; k>=l; k--)
+//  Be careful of potential error:
+//      redeclaration of `i'
 
+#define GAMETEST
+#define ONLINE
 
 #endif // UNIVERSAL

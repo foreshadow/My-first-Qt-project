@@ -1,35 +1,31 @@
+#include "network.h"
 #include "logindlg.h"
 #include "ui_logindlg.h"
 #include <QMessageBox>
 #include <QPainter>
-#include <QtNetwork>
 
-LoginDlg::LoginDlg(QWidget *parent) :
+LoginDlg::LoginDlg(QTcpSocket *tcpSocket, quint16 &blockSize,
+                   QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::LoginDlg)
+    ui(new Ui::LoginDlg),
+    tcpSocket(tcpSocket), blockSize(blockSize),
+    identitySent(false)
 {
 
     ui->setupUi(this);
 
     QString localHostName = QHostInfo::localHostName();
-    //qDebug() <<"localHostName: "<<localHostName;
     QHostInfo info = QHostInfo::fromName(localHostName);
-    //qDebug() <<"IP Address: "<<info.addresses();
-    foreach(QHostAddress address,info.addresses())
+    foreach(QHostAddress address, info.addresses())
     {
          if(address.protocol() == QAbstractSocket::IPv4Protocol)
          qDebug() << address.toString();
-         //ui->??->setWindowTitle(address.toString());
-         //this->repaint();
+
     }
 
-    //sender = new QUdpSocket(this);
-    //udp
-
-    tcpSocket = new QTcpSocket(this);
-    connect(tcpSocket,SIGNAL(readyRead()),this,SLOT(readMessage()));
-    connect(tcpSocket,SIGNAL(error(QAbstractSocket::SocketError)),
-            this,SLOT(displayError(QAbstractSocket::SocketError)));
+    connect(tcpSocket, SIGNAL(readyRead()), this, SLOT(readMessage()));
+    connect(tcpSocket, SIGNAL(error(QAbstractSocket::SocketError)),
+            this, SLOT(displayError(QAbstractSocket::SocketError)));
     //tcp
 }
 
@@ -40,16 +36,22 @@ LoginDlg::~LoginDlg()
 
 void LoginDlg::on_loginButton_clicked()
 {
-    if(ui->usrlineEdit->text() == "")
+    if(ui->usrLineEdit->text() == "")
     {
         QMessageBox::warning(this, "提示",
             "你叫什么名字？",
             QMessageBox::Yes);
-        ui->usrlineEdit->setFocus();
-    } else if(ui->pswlineEdit->text() == "233")
-    {
-//        if(message=="ACEnter")
-            accept();
+        ui->usrLineEdit->setFocus();
+    } else if(ui->pswlineEdit->text() == "233") {
+        if (tcpSocket->state()==QAbstractSocket::ConnectedState
+            && ui->usrLineEdit->text()!="" && !identitySent)
+        {
+            send(tcpSocket, ui->usrLineEdit->text().prepend('I'));
+            identitySent = true;
+        }
+        disconnect(tcpSocket, SIGNAL(readyRead()),
+                   this, SLOT(readMessage()));
+        accept();
     } else {
         QMessageBox::warning(this, "提示",
             "你怎么连密码都不知道= =",
@@ -78,8 +80,9 @@ void LoginDlg::newConnect()
 
 void LoginDlg::readMessage()
 {
+    QString message;  //存放从服务器接收到的字符串
     QDataStream in(tcpSocket);
-    in.setVersion(QDataStream::Qt_5_4);
+    in.setVersion(DATA_STREAM_VERSION);
     if(blockSize==0) //如果是刚开始接收数据
     {
        if(tcpSocket->bytesAvailable() < (int)sizeof(quint16)) return;
@@ -87,7 +90,9 @@ void LoginDlg::readMessage()
     }
     if(tcpSocket->bytesAvailable() < blockSize) return;
     in >> message;
-    ui->statusLabel->setText(message);
+    blockSize = 0;
+
+    ui->statusLabel->setText(message.right(message.length()-1));
 }
 
 void LoginDlg::displayError(QAbstractSocket::SocketError)
@@ -97,6 +102,19 @@ void LoginDlg::displayError(QAbstractSocket::SocketError)
 
 void LoginDlg::on_remoteHostPortLineEdit_editingFinished()
 {
-    ui->statusLabel->setText("连接中");
-    newConnect();
+    if (tcpSocket->state()==QAbstractSocket::UnconnectedState)
+    {
+        ui->statusLabel->setText("连接中");
+        newConnect();
+    }
+}
+
+void LoginDlg::on_usrLineEdit_editingFinished()
+{
+    if (tcpSocket->state()==QAbstractSocket::ConnectedState
+        && ui->usrLineEdit->text()!="" && !identitySent)
+    {
+        send(tcpSocket, ui->usrLineEdit->text().prepend('I'));
+        identitySent = true;
+    }
 }

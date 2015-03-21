@@ -1,10 +1,11 @@
 #include "card.h"
 #include <QtCore>
 
-Card::Card(Suit suit, int number, bool selected):
-    _suit(suit), _number(number), _selected(selected)
+Card::Card(int id):
+    _id(id), _number(id % 54 / 4)
 {
-    qDebug() << "Card initialized.";
+    Suit suitMap[] = { Heart, Diamond, Spade, Club };
+    _suit = suitMap[id % 54 % 4];
 }
 
 Card::~Card()
@@ -12,20 +13,14 @@ Card::~Card()
 
 }
 
-int Card::getId() const{
-    return _id;
-}
-
-int Card::getNumber() const{
-    return _number;
-}
-
-Card::Suit Card::getSuit() const
+int Card::getNumber() const
 {
-    return _suit;
+    int n = _number;
+    if (_id % 54 == 53) n++;
+    return n;
 }
 
-int Card::getSuitN() const
+int Card::getY() const
 {
     switch (_suit) {
     case Heart:
@@ -43,3 +38,8 @@ int Card::getSuitN() const
     }
 }
 
+char Card::getChar() const
+{
+    char str[] = "34567890JQKA2-+";
+    return str[getNumber()];
+}

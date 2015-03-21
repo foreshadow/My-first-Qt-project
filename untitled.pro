@@ -14,20 +14,30 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp \
 	logindlg.cpp \
 	card.cpp \
-	carditem.cpp
+	carditem.cpp \
+    universal.cpp \
+    network.cpp \
+    cardarray.cpp \
+    gameprogress.cpp \
+    cardcontainer.cpp \
+    button.cpp
 
-HEADERS  += mainwindow.h \
+HEADERS  += \
     logindlg.h \
     universal.h \
     network.h \
 	card.h \
-	carditem.h
+	carditem.h \
+    cardarray.h \
+    gameprogress.h \
+    cardcontainer.h \
+    button.h
 
-FORMS    += mainwindow.ui \
-    logindlg.ui
+FORMS    += \
+    logindlg.ui \
+    gameprogress.ui
 
 RESOURCES += \
     myres.qrc
